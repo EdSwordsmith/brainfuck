@@ -1,87 +1,87 @@
 #include <stdio.h>
 #include "visitors.h"
 
-void visit(Visitor visitor, SequenceNode node) {
+void visit(FILE *output, Visitor visitor, SequenceNode node) {
     switch (visitor.type) {
         case PYTHON:
-            printf("#!/usr/bin/python3\n");
-            printf("tape = {}\n");
-            printf("ptr = 0\n\n");
-            printf("current_input = ''\n\n");
-            printf("def inc_value():\n");
-            printf("    if ptr not in tape:\n");
-            printf("        tape[ptr] = 0\n");
-            printf("    tape[ptr] += 1\n\n");
-            printf("def dec_value():\n");
-            printf("    if ptr not in tape:\n");
-            printf("        tape[ptr] = 0\n");
-            printf("    tape[ptr] -= 1\n\n");
-            printf("def read_stdin():\n");
-            printf("    global current_input\n");
-            printf("    if len(current_input) == 0:\n");
-            printf("        current_input = input()\n\n");
-            printf("    if len(current_input) > 0:\n");
-            printf("        tape[ptr] = ord(current_input[0])\n");
-            printf("        current_input = current_input[1:]\n\n");
-            printf("    else:\n");
-            printf("        tape[ptr] = 0\n\n");
-            printf("def should_loop():\n");
-            printf("    if ptr not in tape:\n");
-            printf("        return False\n");
-            printf("    return tape[ptr] != 0\n\n");
+            fprintf(output, "#!/usr/bin/python3\n");
+            fprintf(output, "tape = {}\n");
+            fprintf(output, "ptr = 0\n\n");
+            fprintf(output, "current_input = ''\n\n");
+            fprintf(output, "def inc_value():\n");
+            fprintf(output, "    if ptr not in tape:\n");
+            fprintf(output, "        tape[ptr] = 0\n");
+            fprintf(output, "    tape[ptr] += 1\n\n");
+            fprintf(output, "def dec_value():\n");
+            fprintf(output, "    if ptr not in tape:\n");
+            fprintf(output, "        tape[ptr] = 0\n");
+            fprintf(output, "    tape[ptr] -= 1\n\n");
+            fprintf(output, "def read_stdin():\n");
+            fprintf(output, "    global current_input\n");
+            fprintf(output, "    if len(current_input) == 0:\n");
+            fprintf(output, "        current_input = input()\n\n");
+            fprintf(output, "    if len(current_input) > 0:\n");
+            fprintf(output, "        tape[ptr] = ord(current_input[0])\n");
+            fprintf(output, "        current_input = current_input[1:]\n\n");
+            fprintf(output, "    else:\n");
+            fprintf(output, "        tape[ptr] = 0\n\n");
+            fprintf(output, "def should_loop():\n");
+            fprintf(output, "    if ptr not in tape:\n");
+            fprintf(output, "        return False\n");
+            fprintf(output, "    return tape[ptr] != 0\n\n");
 
             break;
     }
 
     for (int i = 0; i < node.size; ++i) {
-        visit_node(visitor, node.nodes[i]);
+        visit_node(output, visitor, node.nodes[i]);
     }
 }
 
-void visit_node(Visitor visitor, Node node) {
+void visit_node(FILE *output, Visitor visitor, Node node) {
     switch (visitor.type) {
         case PYTHON:
             for (int i = 0; i < visitor.python.ident; ++i) {
-                printf("    ");
+                fprintf(output, "    ");
             }
             
             switch (node.type) {
                 case OPERATION_NODE:
                     switch (node.operation) {
                         case INC_VALUE:
-                            printf("inc_value()\n");
+                            fprintf(output, "inc_value()\n");
                             break;
                         case DEC_VALUE:
-                            printf("dec_value()\n");
+                            fprintf(output, "dec_value()\n");
                             break;
                         case INC_PTR:
-                            printf("ptr += 1\n");
+                            fprintf(output, "ptr += 1\n");
                             break;
                         case DEC_PTR:
-                            printf("ptr -= 1\n");
+                            fprintf(output, "ptr -= 1\n");
                             break;
                         case PRINT:
-                            printf("print(chr(tape[ptr]), end='')\n");
+                            fprintf(output, "print(chr(tape[ptr]), end='')\n");
                             break;
                         case READ:
-                            printf("read_stdin()\n");
+                            fprintf(output, "read_stdin()\n");
                             break;
                     }
                     break;
                 case LOOP_NODE:
-                    printf("while should_loop():\n");
+                    fprintf(output, "while should_loop():\n");
                     visitor.python.ident++;
 
                     for (size_t i = 0; i < node.loop.sequence.size; ++i) {
-                        visit_node(visitor, node.loop.sequence.nodes[i]);
+                        visit_node(output, visitor, node.loop.sequence.nodes[i]);
                     }
 
                     // Make sure there aren't empty while loops
                     if (node.loop.sequence.size == 0) {
                         for (int i = 0; i < visitor.python.ident; ++i) {
-                            printf("    ");
+                            fprintf(output, "    ");
                         }
-                        printf("pass\n");
+                        fprintf(output, "pass\n");
                     }
 
 

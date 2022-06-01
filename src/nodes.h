@@ -46,6 +46,6 @@ Node create_loop_node(SequenceNode sequenceNode);
 void sequence_push_node(SequenceNode *sequenceNode, Node node);
 void free_sequence_node(SequenceNode sequenceNode);
 
-Node build_ast(bool is_loop);
+Node build_ast(FILE *source_file, bool is_loop);
 
 #endif //BRAINFUCK_NODES_H

@@ -18,7 +18,7 @@ typedef struct {
     };
 } Visitor;
 
-void visit(Visitor visitor, SequenceNode node);
-void visit_node(Visitor visitor, Node node);
+void visit(FILE *output, Visitor visitor, SequenceNode node);
+void visit_node(FILE *output, Visitor visitor, Node node);
 
 #endif //BRAINFUCK_VISITORS_H

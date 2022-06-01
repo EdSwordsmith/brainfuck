@@ -47,11 +47,11 @@ void free_sequence_node(SequenceNode sequenceNode) {
     free(sequenceNode.nodes);
 }
 
-Node build_ast(bool is_loop) {
+Node build_ast(FILE *source_file, bool is_loop) {
     Node sequence = create_sequence_node();
 
     int c;
-    while ((c = getchar()) != EOF) {
+    while ((c = fgetc(source_file)) != EOF) {
         switch (c) {
             case '+':
                 sequence_push_node(&sequence.sequence, create_operation_node(INC_VALUE));
@@ -74,7 +74,7 @@ Node build_ast(bool is_loop) {
                 break;
 
             case '[':
-                sequence_push_node(&sequence.sequence, create_loop_node(build_ast(true).sequence));
+                sequence_push_node(&sequence.sequence, create_loop_node(build_ast(source_file, true).sequence));
                 break;
 
             case ']':
