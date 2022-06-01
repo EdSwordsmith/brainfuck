@@ -26,6 +26,11 @@ args_t parse_args(int argc, char **argv) {
         args.type = PYTHON;
         if (argc > 3)
             args.output_file = argv[3];
+    } else if (argc > 2 && strcmp(argv[1], "c") == 0) {
+        args.source_file = argv[2];
+        args.type = C;
+        if (argc > 3)
+            args.output_file = argv[3];
     } else if (argc == 2) {
         // Default visitor and stdout
         args.source_file = argv[1];
@@ -47,6 +52,8 @@ int main(int argc, char **argv) {
     switch (visitor.type) {
         case PYTHON:
             visitor.python = python_visitor;
+            break;
+        default:
             break;
     }
 

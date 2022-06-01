@@ -4,7 +4,8 @@
 #include "nodes.h"
 
 typedef enum {
-    PYTHON
+    PYTHON,
+    C
 } VisitorType;
 
 typedef struct {

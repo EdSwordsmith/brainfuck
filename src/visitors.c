@@ -29,12 +29,28 @@ void visit(FILE *output, Visitor visitor, SequenceNode node) {
             fprintf(output, "    if ptr not in tape:\n");
             fprintf(output, "        return False\n");
             fprintf(output, "    return tape[ptr] != 0\n\n");
+            break;
 
+        case C:
+            fprintf(output, "#include <stdio.h>\n");
+            fprintf(output, "char tape[256];\n");
+            fprintf(output, "unsigned char ptr = 0;\n");
+            fprintf(output, "int main() {\n");
             break;
     }
 
     for (int i = 0; i < node.size; ++i) {
         visit_node(output, visitor, node.nodes[i]);
+    }
+
+    switch (visitor.type) {
+        case C:
+            fprintf(output, "return 0;\n");
+            fprintf(output, "}\n");
+            break;
+
+        default:
+            break;
     }
 }
 
@@ -44,7 +60,7 @@ void visit_node(FILE *output, Visitor visitor, Node node) {
             for (int i = 0; i < visitor.python.ident; ++i) {
                 fprintf(output, "    ");
             }
-            
+
             switch (node.type) {
                 case OPERATION_NODE:
                     switch (node.operation) {
@@ -91,5 +107,43 @@ void visit_node(FILE *output, Visitor visitor, Node node) {
                     break;
             }
             break;
+
+        case C:
+            switch (node.type) {
+                case OPERATION_NODE:
+                    switch (node.operation) {
+                        case INC_VALUE:
+                            fprintf(output, "tape[ptr]++;");
+                            break;
+                        case DEC_VALUE:
+                            fprintf(output, "tape[ptr]--;");
+                            break;
+                        case INC_PTR:
+                            fprintf(output, "ptr++;");
+                            break;
+                        case DEC_PTR:
+                            fprintf(output, "ptr--;");
+                            break;
+                        case PRINT:
+                            fprintf(output, "putchar(tape[ptr]);\n");
+                            break;
+                        case READ:
+                            fprintf(output, "tape[ptr] = getchar();\n");
+                            break;
+                    }
+                    break;
+                case LOOP_NODE:
+                    fprintf(output, "while (tape[ptr] != 0) {");
+
+                    for (size_t i = 0; i < node.loop.sequence.size; ++i) {
+                        visit_node(output, visitor, node.loop.sequence.nodes[i]);
+                    }
+
+                    fprintf(output, "}");
+
+                    break;
+                case SEQUENCE_NODE:
+                    break;
+            }
     }
 }
