@@ -13,7 +13,7 @@ typedef struct {
 static PythonVisitor python_visitor = { .ident = 0 };
 
 args_t parse_args(int argc, char **argv) {
-    args_t args = { .type = PYTHON, .source_file = NULL, .output_file = NULL };
+    args_t args = { .type = C, .source_file = NULL, .output_file = NULL };
 
     if (argc < 2) {
         fprintf(stderr, "usage: %s source_file\n", argv[0]);
