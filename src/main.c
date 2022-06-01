@@ -17,6 +17,9 @@ args_t parse_args(int argc, char **argv) {
 
     if (argc < 2) {
         fprintf(stderr, "usage: %s source_file\n", argv[0]);
+        fprintf(stderr, "       %s source_file output\n", argv[0]);
+        fprintf(stderr, "       %s python source_file\n", argv[0]);
+        fprintf(stderr, "       %s python source_file output\n", argv[0]);
         args.error = true;
     } else if (argc > 2 && strcmp(argv[1], "python") == 0) {
         args.source_file = argv[2];
